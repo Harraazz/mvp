@@ -1,10 +1,17 @@
-import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import EventListScreen from "./pages/EventListScreen";
+import EventDetailScreen from "./pages/EventDetailScreen";
+import CreateEventScreen from "./pages/CreateEventScreen";
 
 function App() {
   return (
-    <>
-      <h1 className="text-3xl font-bold text-green-500">Hello world!</h1>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<EventListScreen />} />
+        <Route path="/event/:id" element={<EventDetailScreen />} />
+        <Route path="/create" element={<CreateEventScreen />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
