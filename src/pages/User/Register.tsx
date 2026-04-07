@@ -5,6 +5,7 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [full_name, setName] = useState("");
+  const [referral_code, setReferralCode] = useState("");
 
   const handleRegister = async () => {
     const { data, error } = await supabase.auth.signUp({
@@ -29,11 +30,45 @@ export default function Register() {
       id: userId,
       full_name,
       role: "customer",
+      referral_code: Math.random().toString(36).substring(2, 8).toUpperCase(),
     });
 
     if (profileError) {
       alert(`Profile gagal disimpan: ${profileError.message}`);
       return;
+    }
+
+    if (referral_code) {
+      // cari user yang punya kode itu
+      const { data: refUser, error: refError } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("referral_code", referral_code)
+        .single();
+
+      if (refError || !refUser) {
+        alert("Referral code tidak valid");
+        return;
+      }
+
+      // simpan ke table referrals
+      const { error: insertRefError } = await supabase
+        .from("referrals")
+        .insert({
+          referrer_id: refUser.id, // yang ngajak
+          referee_id: userId, // yang daftar
+          points_earned: 10000, // bebas (logic kamu)
+          expires_at: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // contoh 90 hari
+        });
+
+      if (refUser.id === userId) {
+        alert("Anda tidak bisa menggunakan kode referral sendiri");
+      }
+
+      if (insertRefError) {
+        alert("Gagal simpan referral");
+        return;
+      }
     }
 
     alert("Register sukses!");
@@ -63,6 +98,12 @@ export default function Register() {
           placeholder="Password"
           className="w-full border p-2 rounded mb-4"
           onChange={(e) => setPassword(e.target.value)}
+        />
+        <input
+          type="referral_code"
+          placeholder="Referral Code"
+          className="w-full border p-2 rounded mb-4"
+          onChange={(e) => setReferralCode(e.target.value)}
         />
 
         <button
