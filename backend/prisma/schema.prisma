@@ -20,11 +20,9 @@ model User {
   referral_code String   @unique
   points        Int      @default(0)
   created_at    DateTime @default(now())
-
   events       Event[]       @relation("UserEvents")
   transactions Transaction[]
   reviews      Review[]
-
   referralsSent     Referral[] @relation("Referrer")
   referralsReceived Referral[] @relation("Referred")
 }
