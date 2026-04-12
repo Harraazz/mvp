@@ -1,11 +1,12 @@
 import express from "express";
-import auth from "./routes/auth";
 
 const app = express();
-app.use(express.json());
+const PORT = 3000;
 
-app.use("/api", auth);
+app.get("/", (req, res) => {
+  res.send("Backend jalan 🚀");
+});
 
-app.listen(3000, () => {
-  console.log("Server jalan di http://localhost:3000");
+app.listen(PORT, () => {
+  console.log(`http://localhost:${PORT}`);
 });

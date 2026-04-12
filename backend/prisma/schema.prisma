@@ -1,5 +1,11 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -7,65 +13,65 @@ datasource db {
 }
 
 model User {
-  id                 String        @id @default(uuid())
-  email              String        @unique
-  password           String
-  role               String
-  referral_code      String?       @unique
-  points             Int           @default(0)
-  events             Event[]
-  transactions       Transaction[]
-  reviews            Review[]
-  referrals_sent     Referral[]    @relation("Referrer")
-  referrals_received Referral[]    @relation("Referred")
-  created_at         DateTime      @default(now())
+  id             String   @id @default(uuid())
+  email          String   @unique
+  password       String
+  role           String
+  referral_code  String?  @unique
+  points         Int      @default(0)
+  events         Event[]
+  transactions   Transaction[]
+  reviews        Review[]
+  referrals_sent     Referral[] @relation("Referrer")
+  referrals_received Referral[] @relation("Referred")
+  created_at     DateTime @default(now())
 }
 
 model Event {
-  id           String        @id @default(uuid())
-  name         String
-  price        Int
-  date         DateTime
-  location     String
-  description  String
-  seats        Int
-  category     String?
-  is_free      Boolean       @default(false)
-  organizer_id String
-  organizer    User          @relation(fields: [organizer_id], references: [id])
-  transactions Transaction[]
-  reviews      Review[]
+  id              String   @id @default(uuid())
+  name            String
+  price           Int
+  date            DateTime
+  location        String
+  description     String
+  seats           Int
+  category        String?
+  is_free         Boolean  @default(false)
+  organizer_id    String
+  organizer       User     @relation(fields: [organizer_id], references: [id])
+  transactions    Transaction[]
+  reviews         Review[]
 }
 
 model Transaction {
-  id          String   @id @default(uuid())
-  user_id     String
-  event_id    String
-  total_price Int
-  used_points Int      @default(0)
-  final_price Int
-  user        User     @relation(fields: [user_id], references: [id])
-  event       Event    @relation(fields: [event_id], references: [id])
-  created_at  DateTime @default(now())
+  id            String   @id @default(uuid())
+  user_id       String
+  event_id      String
+  total_price   Int
+  used_points   Int      @default(0)
+  final_price   Int
+  user          User     @relation(fields: [user_id], references: [id])
+  event         Event    @relation(fields: [event_id], references: [id])
+  created_at    DateTime @default(now())
 }
 
 model Review {
-  id         String   @id @default(uuid())
-  user_id    String
-  event_id   String
-  rating     Int
-  comment    String?
-  user       User     @relation(fields: [user_id], references: [id])
-  event      Event    @relation(fields: [event_id], references: [id])
+  id        String   @id @default(uuid())
+  user_id   String
+  event_id  String
+  rating    Int
+  comment   String?
+  user      User   @relation(fields: [user_id], references: [id])
+  event     Event  @relation(fields: [event_id], references: [id])
   created_at DateTime @default(now())
 }
 
 model Referral {
-  id            String   @id @default(uuid())
-  referrer_id   String
-  referred_id   String
-  points_earned Int
-  expired_at    DateTime
-  referrer      User     @relation("Referrer", fields: [referrer_id], references: [id])
-  referred      User     @relation("Referred", fields: [referred_id], references: [id])
+  id             String   @id @default(uuid())
+  referrer_id    String
+  referred_id    String
+  points_earned  Int
+  expired_at     DateTime
+  referrer       User @relation("Referrer", fields: [referrer_id], references: [id])
+  referred       User @relation("Referred", fields: [referred_id], references: [id])
 }
